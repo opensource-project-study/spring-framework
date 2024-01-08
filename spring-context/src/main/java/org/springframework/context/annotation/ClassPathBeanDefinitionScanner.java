@@ -333,6 +333,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * has been found for the specified name
 	 */
 	protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
+		// BeanDefinitionRegistry接口的默认实现是DefaultListableBeanFactory
 		if (!this.registry.containsBeanDefinition(beanName)) {
 			return true;
 		}
@@ -341,6 +342,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		if (originatingDef != null) {
 			existingDef = originatingDef;
 		}
+		// 如果beanName对应的BeanDefinition已经存在，并且和传过来的beanDefinition不兼容，则抛出异常
 		if (isCompatible(beanDefinition, existingDef)) {
 			return false;
 		}

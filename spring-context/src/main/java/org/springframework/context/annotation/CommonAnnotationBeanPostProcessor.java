@@ -326,6 +326,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
 		InjectionMetadata metadata = findResourceMetadata(beanName, bean.getClass(), pvs);
 		try {
+			// 依赖注入
 			metadata.inject(bean, beanName, pvs);
 		}
 		catch (Throwable ex) {
@@ -547,6 +548,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 				}
 			}
 			else {
+				// 根据name从beanFactory中取出对应的bean，如果没有，尝试创建之
 				resource = beanFactory.resolveBeanByName(name, descriptor);
 				autowiredBeanNames = Collections.singleton(name);
 			}
@@ -632,6 +634,8 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	/**
 	 * Class representing injection information about an annotated field
 	 * or setter method, supporting the @Resource annotation.
+	 *
+	 * <p>这是一个普通的内部类，可以访问外围类的属性和方法
 	 */
 	private class ResourceElement extends LookupElement {
 

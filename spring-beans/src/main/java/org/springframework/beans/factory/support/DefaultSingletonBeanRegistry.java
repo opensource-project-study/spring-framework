@@ -31,6 +31,7 @@ import org.springframework.beans.factory.BeanCreationNotAllowedException;
 import org.springframework.beans.factory.BeanCurrentlyInCreationException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.core.SimpleAliasRegistry;
 import org.springframework.lang.Nullable;
@@ -206,6 +207,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	/**
 	 * Return the (raw) singleton object registered under the given name,
 	 * creating and registering a new one if none registered yet.
+	 *
+	 * <p>如果A依赖B，假设先实例化A，则调用到此方法，之后会调用到{@link InjectionMetadata#inject(java.lang.Object, java.lang.String, org.springframework.beans.PropertyValues)}把B注入到A中，
+	 * 而B还没有实例化，B也会调用到此方法。换句话说，这种情况其实是一种递归调用，应该用递归的思想来思考。
+	 *
 	 * @param beanName the name of the bean
 	 * @param singletonFactory the ObjectFactory to lazily create the singleton
 	 * with, if necessary
@@ -213,8 +218,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(beanName, "Bean name must not be null");
+		// 加锁
 		synchronized (this.singletonObjects) {
 			Object singletonObject = this.singletonObjects.get(beanName);
+			// 若singleton在cache中不存在，创建之
 			if (singletonObject == null) {
 				if (this.singletonsCurrentlyInDestruction) {
 					throw new BeanCreationNotAllowedException(beanName,
@@ -224,6 +231,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
+				// singleton创建完成之前，添加beanName到singletonsCurrentlyInCreation，如果beanName已经存在，说明存在dependency cycle
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -231,6 +239,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
+					// 创建singleton
 					singletonObject = singletonFactory.getObject();
 					newSingleton = true;
 				}
@@ -254,8 +263,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
+					// singleton创建完成之后，从singletonsCurrentlyInCreation移除beanName
 					afterSingletonCreation(beanName);
 				}
+				// 创建singleton成功之后，将其添加到缓存中
 				if (newSingleton) {
 					addSingleton(beanName, singletonObject);
 				}
