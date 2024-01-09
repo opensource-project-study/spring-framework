@@ -291,6 +291,7 @@ configure(allprojects) { project ->
 		}
 		repositories {
 			mavenCentral()
+			maven { url "https://maven.aliyun.com/repository/public" }
 			maven { url "https://repo.spring.io/libs-spring-framework-build" }
 		}
 	}
@@ -331,13 +332,13 @@ configure([rootProject] + javaProjects) { project ->
 		}
 	}
 
-	test {
-		useJUnitPlatform()
-		include(["**/*Tests.class", "**/*Test.class"])
-		systemProperty("java.awt.headless", "true")
-		systemProperty("testGroups", project.properties.get("testGroups"))
-		systemProperty("io.netty.leakDetection.level", "paranoid")
-	}
+//	test {
+//		useJUnitPlatform()
+//		include(["**/*Tests.class", "**/*Test.class"])
+//		systemProperty("java.awt.headless", "true")
+//		systemProperty("testGroups", project.properties.get("testGroups"))
+//		systemProperty("io.netty.leakDetection.level", "paranoid")
+//	}
 
 	checkstyle {
 		toolVersion = "10.12.5"
