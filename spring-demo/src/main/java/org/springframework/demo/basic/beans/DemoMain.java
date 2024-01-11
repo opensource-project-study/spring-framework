@@ -11,7 +11,6 @@ public class DemoMain {
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 						"xml/Demo.xml");
-		context.setAllowCircularReferences(false);
 		DependencyDemoA dependencyDemoA = (DependencyDemoA) context.getBean("dependencyDemoA");
 		dependencyDemoA.sayHello();
 	}
