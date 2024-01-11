@@ -140,6 +140,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 
 		super(parent);
 		setConfigLocations(configLocations);
+		// 一般把refresh()方法作为调试的入口
 		if (refresh) {
 			refresh();
 		}

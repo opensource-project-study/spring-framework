@@ -580,6 +580,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			// 实例化一个bean
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		Object bean = instanceWrapper.getWrappedInstance();
@@ -604,6 +605,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Eagerly cache singletons to be able to resolve circular references
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
+		// allowCircularReferences默认是true
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
@@ -611,6 +613,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
+			// 生成一个ObjectFactory实例写入singletonFactories中
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
@@ -618,7 +621,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Object exposedObject = bean;
 		try {
 			// 填充属性
+			// 最终调用到AbstractBeanFactory.getBean(String, Class<T>)查找或者创建一个bean作为属性注入到beanName对应bean中，以完成属性填充
+			// 调用链路：org.springframework.beans.factory.annotation.InjectionMetadata.InjectedElement.inject -> org.springframework.context.annotation.CommonAnnotationBeanPostProcessor.getResource -> org.springframework.context.annotation.CommonAnnotationBeanPostProcessor.autowireResource ->
+			// -> resolveBeanByName -> AbstractBeanFactory.getBean(String, Class<T>) -> doGetBean -> DefaultSingletonBeanRegistry.getSingleton(String)
+			// 如果DefaultSingletonBeanRegistry.getSingleton(String)查找到了一个bean，直接返回；否则，调用
+			// DefaultSingletonBeanRegistry.getSingleton(String, ObjectFactory<?>) -> createBean(String, RootBeanDefinition, Object[]) -> 当前方法 -> addSingletonFactory
+			//
+			// 从整体的调用链路来看，Spring框架启动 -> DefaultListableBeanFactory.preInstantiateSingletons ->
+			// 									 AbstractBeanFactory.getBean(String) -> doGetBean -> DefaultSingletonBeanRegistry.getSingleton(String)刚开始查不到bean，所以走下面的方法
+			// DefaultSingletonBeanRegistry.getSingleton(String, ObjectFactory<?>) -> createBean(String, RootBeanDefinition, Object[]) -> 当前方法 -> addSingletonFactory
+			// 即 从AbstractBeanFactory.getBean(String)开始，就是一个递归结构
 			populateBean(beanName, mbd, instanceWrapper);
+			// 对bean初始化
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
@@ -632,7 +646,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (earlySingletonExposure) {
+			// 因为bean还没有加入到singletonObjects中，所以这里是从earlySingletonObjects里取值
 			Object earlySingletonReference = getSingleton(beanName, false);
+			// 如果不为null，说明该bean是调用方法DefaultSingletonBeanRegistry.getSingleton(String) -> DefaultSingletonBeanRegistry.getSingleton(String, true)，其中的ObjectFactory创建的
+			// 而ObjectFactory是在上面的方法addSingletonFactory中写入到singletonFactories里的
+			// 说明前后两次尝试创建该bean，第一次调用到addSingletonFactory，第二次调用到DefaultSingletonBeanRegistry.getSingleton(String)
+			// 走到这里，一般是因为在执行完populateBean方法后，回溯到了第一次调用
+			// 完整的示例可以查看AbstractBeanFactory.doGetBean方法上的注释。
+			//
+			// 总的来说，earlySingletonReference != null，说明存在circular reference，但是earlySingletonObjects并不用来解决这个问题，真正解决circular reference的是addSingletonFactory方法 和 DefaultSingletonBeanRegistry.getSingleton(String)
 			if (earlySingletonReference != null) {
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;

@@ -933,7 +933,6 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				if (isFactoryBean(beanName)) {
-					// 触发单例bean的实例化
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -953,6 +952,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}
 				}
 				else {
+					// 触发单例bean的实例化
 					getBean(beanName);
 				}
 			}

@@ -672,7 +672,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	/**
 	 * Tell the subclass to refresh the internal bean factory.
-	 * @return the fresh BeanFactory instance
+	 * @return the fresh BeanFactory instance 默认是{@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
 	 * @see #refreshBeanFactory()
 	 * @see #getBeanFactory()
 	 */
