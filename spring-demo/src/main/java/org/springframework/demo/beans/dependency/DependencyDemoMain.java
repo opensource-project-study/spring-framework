@@ -1,4 +1,4 @@
-package org.springframework.demo.basic.beans;
+package org.springframework.demo.beans.dependency;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -6,7 +6,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author yyuweb@outlook.com
  * @date 2024/1/9
  */
-public class DemoMain {
+public class DependencyDemoMain {
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(

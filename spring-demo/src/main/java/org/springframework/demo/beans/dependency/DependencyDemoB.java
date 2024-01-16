@@ -1,4 +1,4 @@
-package org.springframework.demo.basic.beans;
+package org.springframework.demo.beans.dependency;
 
 import javax.annotation.Resource;
 
