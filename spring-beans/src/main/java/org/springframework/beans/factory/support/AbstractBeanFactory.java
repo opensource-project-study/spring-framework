@@ -1961,6 +1961,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				// Register a DisposableBean implementation that performs all destruction
 				// work for the given bean: DestructionAwareBeanPostProcessors,
 				// DisposableBean interface, custom destroy method.
+				// context关闭时回调DisposableBeanAdapter.destroy方法 参考：org.springframework.context.support.AbstractApplicationContext.close -> ... -> DefaultSingletonBeanRegistry.destroyBean方法
 				registerDisposableBean(beanName, new DisposableBeanAdapter(
 						bean, beanName, mbd, getBeanPostProcessorCache().destructionAware, acc));
 			}

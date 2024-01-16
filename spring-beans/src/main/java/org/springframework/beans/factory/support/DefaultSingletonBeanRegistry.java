@@ -542,6 +542,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		this.dependentBeanMap.clear();
 		this.dependenciesForBeanMap.clear();
 
+		// 清除singleton的缓存
 		clearSingletonCache();
 	}
 
@@ -567,6 +568,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	public void destroySingleton(String beanName) {
 		// Remove a registered singleton of the given name, if any.
+		// 从缓存中清除该singleton
 		removeSingleton(beanName);
 
 		// Destroy the corresponding DisposableBean instance.
@@ -600,6 +602,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		}
 
 		// Actually destroy the bean now...
+		// 这里的bean是DisposableBeanAdapter类型
 		if (bean != null) {
 			try {
 				bean.destroy();

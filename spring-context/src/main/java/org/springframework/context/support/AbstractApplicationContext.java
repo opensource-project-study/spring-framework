@@ -588,7 +588,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				// 实例化单例作用域的bean
+				// 实例化非懒初始化的单例作用域的bean
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -627,6 +627,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected void prepareRefresh() {
 		// Switch to active.
 		this.startupDate = System.currentTimeMillis();
+		// 设置两个Flag
 		this.closed.set(false);
 		this.active.set(true);
 
@@ -1085,9 +1086,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 
 			// Destroy all cached singletons in the context's BeanFactory.
+			// 销毁BeanFactory中缓存的所有单例
 			destroyBeans();
 
 			// Close the state of this context itself.
+			// 关闭BeanFactory
 			closeBeanFactory();
 
 			// Let subclasses do some final clean-up if they wish...
