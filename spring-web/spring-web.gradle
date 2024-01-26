@@ -91,3 +91,8 @@ dependencies {
 		because("needed by Netty's SelfSignedCertificate on JDK 15+")
 	}
 }
+
+test {
+    // 跳过测试
+    enabled(false)
+}

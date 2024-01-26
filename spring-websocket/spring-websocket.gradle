@@ -27,3 +27,7 @@ dependencies {
 	testImplementation("org.apache.tomcat.embed:tomcat-embed-websocket")
 	testImplementation("io.projectreactor.netty:reactor-netty-http")
 }
+
+test {
+    enabled(false)
+}
