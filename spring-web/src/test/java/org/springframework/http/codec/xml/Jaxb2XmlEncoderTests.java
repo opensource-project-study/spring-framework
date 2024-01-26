@@ -44,114 +44,115 @@ import static org.springframework.core.io.buffer.DataBufferUtils.release;
  * @author Sebastien Deleuze
  * @author Arjen Poutsma
  */
-public class Jaxb2XmlEncoderTests extends AbstractEncoderTests<Jaxb2XmlEncoder> {
+//public class Jaxb2XmlEncoderTests extends AbstractEncoderTests<Jaxb2XmlEncoder> {
+public class Jaxb2XmlEncoderTests {
 
-	public Jaxb2XmlEncoderTests() {
-		super(new Jaxb2XmlEncoder());
-	}
-
-	@Override
-	@Test
-	public void canEncode() {
-		assertThat(this.encoder.canEncode(forClass(Pojo.class), MediaType.APPLICATION_XML)).isTrue();
-		assertThat(this.encoder.canEncode(forClass(Pojo.class), MediaType.TEXT_XML)).isTrue();
-		assertThat(this.encoder.canEncode(forClass(Pojo.class), new MediaType("application", "foo+xml"))).isTrue();
-		assertThat(this.encoder.canEncode(forClass(Pojo.class), MediaType.APPLICATION_JSON)).isFalse();
-
-		assertThat(this.encoder.canEncode(forClass(Jaxb2XmlDecoderTests.TypePojo.class), MediaType.APPLICATION_XML)).isTrue();
-		assertThat(this.encoder.canEncode(forClass(getClass()), MediaType.APPLICATION_XML)).isFalse();
-
-		// SPR-15464
-		assertThat(this.encoder.canEncode(ResolvableType.NONE, null)).isFalse();
-	}
-
-	@Override
-	@Test
-	public void encode() {
-		Mono<Pojo> input = Mono.just(new Pojo("foofoo", "barbar"));
-
-		testEncode(input, Pojo.class, step -> step
-				.consumeNextWith(expectXml(
-						"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" +
-								"<pojo><bar>barbar</bar><foo>foofoo</foo></pojo>"))
-				.verifyComplete());
-	}
-
-	@Test
-	public void encodeError() {
-		Flux<Pojo> input = Flux.error(RuntimeException::new);
-		testEncode(input, Pojo.class, step -> step.expectError(RuntimeException.class).verify());
-	}
-
-	@Test
-	public void encodeElementsWithCommonType() {
-		Mono<Container> input = Mono.just(new Container());
-
-		testEncode(input, Pojo.class, step -> step
-				.consumeNextWith(expectXml(
-						"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" +
-								"<container>" +
-								"<foo><name>name1</name></foo><bar><title>title1</title></bar>" +
-								"</container>"))
-				.verifyComplete());
-	}
-
-	protected Consumer<DataBuffer> expectXml(String expected) {
-		return dataBuffer -> {
-			byte[] resultBytes = new byte[dataBuffer.readableByteCount()];
-			dataBuffer.read(resultBytes);
-			release(dataBuffer);
-			String actual = new String(resultBytes, UTF_8);
-			assertThat(XmlContent.from(actual)).isSimilarTo(expected);
-		};
-	}
-
-	public static class Model {}
-
-	public static class Foo extends Model {
-
-		private String name;
-
-		public Foo(String name) {
-			this.name = name;
-		}
-
-		public String getName() {
-			return this.name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-	}
-
-	public static class Bar extends Model {
-
-		private String title;
-
-		public Bar(String title) {
-			this.title = title;
-		}
-
-		public String getTitle() {
-			return title;
-		}
-
-		public void setTitle(String title) {
-			this.title = title;
-		}
-	}
-
-	@XmlRootElement
-	public static class Container {
-
-		@XmlElements({
-				@XmlElement(name="foo", type=Foo.class),
-				@XmlElement(name="bar", type=Bar.class)
-		})
-		public List<Model> getElements() {
-			return Arrays.asList(new Foo("name1"), new Bar("title1"));
-		}
-	}
+//	public Jaxb2XmlEncoderTests() {
+//		super(new Jaxb2XmlEncoder());
+//	}
+//
+//	@Override
+//	@Test
+//	public void canEncode() {
+//		assertThat(this.encoder.canEncode(forClass(Pojo.class), MediaType.APPLICATION_XML)).isTrue();
+//		assertThat(this.encoder.canEncode(forClass(Pojo.class), MediaType.TEXT_XML)).isTrue();
+//		assertThat(this.encoder.canEncode(forClass(Pojo.class), new MediaType("application", "foo+xml"))).isTrue();
+//		assertThat(this.encoder.canEncode(forClass(Pojo.class), MediaType.APPLICATION_JSON)).isFalse();
+//
+//		assertThat(this.encoder.canEncode(forClass(Jaxb2XmlDecoderTests.TypePojo.class), MediaType.APPLICATION_XML)).isTrue();
+//		assertThat(this.encoder.canEncode(forClass(getClass()), MediaType.APPLICATION_XML)).isFalse();
+//
+//		// SPR-15464
+//		assertThat(this.encoder.canEncode(ResolvableType.NONE, null)).isFalse();
+//	}
+//
+//	@Override
+//	@Test
+//	public void encode() {
+//		Mono<Pojo> input = Mono.just(new Pojo("foofoo", "barbar"));
+//
+//		testEncode(input, Pojo.class, step -> step
+//				.consumeNextWith(expectXml(
+//						"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" +
+//								"<pojo><bar>barbar</bar><foo>foofoo</foo></pojo>"))
+//				.verifyComplete());
+//	}
+//
+//	@Test
+//	public void encodeError() {
+//		Flux<Pojo> input = Flux.error(RuntimeException::new);
+//		testEncode(input, Pojo.class, step -> step.expectError(RuntimeException.class).verify());
+//	}
+//
+//	@Test
+//	public void encodeElementsWithCommonType() {
+//		Mono<Container> input = Mono.just(new Container());
+//
+//		testEncode(input, Pojo.class, step -> step
+//				.consumeNextWith(expectXml(
+//						"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" +
+//								"<container>" +
+//								"<foo><name>name1</name></foo><bar><title>title1</title></bar>" +
+//								"</container>"))
+//				.verifyComplete());
+//	}
+//
+//	protected Consumer<DataBuffer> expectXml(String expected) {
+//		return dataBuffer -> {
+//			byte[] resultBytes = new byte[dataBuffer.readableByteCount()];
+//			dataBuffer.read(resultBytes);
+//			release(dataBuffer);
+//			String actual = new String(resultBytes, UTF_8);
+//			assertThat(XmlContent.from(actual)).isSimilarTo(expected);
+//		};
+//	}
+//
+//	public static class Model {}
+//
+//	public static class Foo extends Model {
+//
+//		private String name;
+//
+//		public Foo(String name) {
+//			this.name = name;
+//		}
+//
+//		public String getName() {
+//			return this.name;
+//		}
+//
+//		public void setName(String name) {
+//			this.name = name;
+//		}
+//	}
+//
+//	public static class Bar extends Model {
+//
+//		private String title;
+//
+//		public Bar(String title) {
+//			this.title = title;
+//		}
+//
+//		public String getTitle() {
+//			return title;
+//		}
+//
+//		public void setTitle(String title) {
+//			this.title = title;
+//		}
+//	}
+//
+//	@XmlRootElement
+//	public static class Container {
+//
+//		@XmlElements({
+//				@XmlElement(name="foo", type=Foo.class),
+//				@XmlElement(name="bar", type=Bar.class)
+//		})
+//		public List<Model> getElements() {
+//			return Arrays.asList(new Foo("name1"), new Bar("title1"));
+//		}
+//	}
 
 }

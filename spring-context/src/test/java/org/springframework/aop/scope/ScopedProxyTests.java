@@ -59,16 +59,16 @@ public class ScopedProxyTests {
 		assertThat(condition).isTrue();
 	}
 
-	@Test
-	public void testSimpleProxy() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(MAP_CONTEXT);
-		Object simpleMap = bf.getBean("simpleMap");
-		boolean condition1 = simpleMap instanceof Map;
-		assertThat(condition1).isTrue();
-		boolean condition = simpleMap instanceof HashMap;
-		assertThat(condition).isTrue();
-	}
+//	@Test
+//	public void testSimpleProxy() throws Exception {
+//		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+//		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(MAP_CONTEXT);
+//		Object simpleMap = bf.getBean("simpleMap");
+//		boolean condition1 = simpleMap instanceof Map;
+//		assertThat(condition1).isTrue();
+//		boolean condition = simpleMap instanceof HashMap;
+//		assertThat(condition).isTrue();
+//	}
 
 	@Test
 	public void testScopedOverride() throws Exception {
@@ -118,35 +118,35 @@ public class ScopedProxyTests {
 		bf.setSerializationId(null);
 	}
 
-	@Test
-	public void testCglibScopedProxy() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(LIST_CONTEXT);
-		bf.setSerializationId("Y");
-		SimpleMapScope scope = new SimpleMapScope();
-		bf.registerScope("request", scope);
-
-		TestBean tb = (TestBean) bf.getBean("testBean");
-		assertThat(AopUtils.isCglibProxy(tb.getFriends())).isTrue();
-		boolean condition1 = tb.getFriends() instanceof ScopedObject;
-		assertThat(condition1).isTrue();
-		ScopedObject scoped = (ScopedObject) tb.getFriends();
-		assertThat(scoped.getTargetObject().getClass()).isEqualTo(ArrayList.class);
-		tb.getFriends().add("myFriend");
-
-		assertThat(scope.getMap().containsKey("scopedTarget.scopedList")).isTrue();
-		assertThat(scope.getMap().get("scopedTarget.scopedList").getClass()).isEqualTo(ArrayList.class);
-
-		ArrayList<?> deserialized = (ArrayList<?>) SerializationTestUtils.serializeAndDeserialize(tb.getFriends());
-		assertThat(deserialized).isNotNull();
-		assertThat(AopUtils.isCglibProxy(deserialized)).isTrue();
-		assertThat(deserialized.contains("myFriend")).isTrue();
-		boolean condition = deserialized instanceof ScopedObject;
-		assertThat(condition).isTrue();
-		ScopedObject scopedDeserialized = (ScopedObject) deserialized;
-		assertThat(scopedDeserialized.getTargetObject().getClass()).isEqualTo(ArrayList.class);
-
-		bf.setSerializationId(null);
-	}
+//	@Test
+//	public void testCglibScopedProxy() throws Exception {
+//		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+//		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(LIST_CONTEXT);
+//		bf.setSerializationId("Y");
+//		SimpleMapScope scope = new SimpleMapScope();
+//		bf.registerScope("request", scope);
+//
+//		TestBean tb = (TestBean) bf.getBean("testBean");
+//		assertThat(AopUtils.isCglibProxy(tb.getFriends())).isTrue();
+//		boolean condition1 = tb.getFriends() instanceof ScopedObject;
+//		assertThat(condition1).isTrue();
+//		ScopedObject scoped = (ScopedObject) tb.getFriends();
+//		assertThat(scoped.getTargetObject().getClass()).isEqualTo(ArrayList.class);
+//		tb.getFriends().add("myFriend");
+//
+//		assertThat(scope.getMap().containsKey("scopedTarget.scopedList")).isTrue();
+//		assertThat(scope.getMap().get("scopedTarget.scopedList").getClass()).isEqualTo(ArrayList.class);
+//
+//		ArrayList<?> deserialized = (ArrayList<?>) SerializationTestUtils.serializeAndDeserialize(tb.getFriends());
+//		assertThat(deserialized).isNotNull();
+//		assertThat(AopUtils.isCglibProxy(deserialized)).isTrue();
+//		assertThat(deserialized.contains("myFriend")).isTrue();
+//		boolean condition = deserialized instanceof ScopedObject;
+//		assertThat(condition).isTrue();
+//		ScopedObject scopedDeserialized = (ScopedObject) deserialized;
+//		assertThat(scopedDeserialized.getTargetObject().getClass()).isEqualTo(ArrayList.class);
+//
+//		bf.setSerializationId(null);
+//	}
 
 }

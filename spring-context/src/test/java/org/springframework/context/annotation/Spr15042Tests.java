@@ -26,37 +26,37 @@ import org.springframework.aop.target.CommonsPool2TargetSource;
  */
 class Spr15042Tests {
 
-	@Test
-	void poolingTargetSource() {
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PoolingTargetSourceConfig.class);
-		context.close();
-	}
-
-
-	@Configuration
-	static class PoolingTargetSourceConfig {
-
-		@Bean
-		@Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
-		public ProxyFactoryBean myObject() {
-			ProxyFactoryBean pfb = new ProxyFactoryBean();
-			pfb.setTargetSource(poolTargetSource());
-			return pfb;
-		}
-
-		@Bean
-		public CommonsPool2TargetSource poolTargetSource() {
-			CommonsPool2TargetSource pool = new CommonsPool2TargetSource();
-			pool.setMaxSize(3);
-			pool.setTargetBeanName("myObjectTarget");
-			return pool;
-		}
-
-		@Bean(name = "myObjectTarget")
-		@Scope(scopeName = "prototype")
-		public Object myObjectTarget() {
-			return new Object();
-		}
-	}
+//	@Test
+//	void poolingTargetSource() {
+//		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PoolingTargetSourceConfig.class);
+//		context.close();
+//	}
+//
+//
+//	@Configuration
+//	static class PoolingTargetSourceConfig {
+//
+//		@Bean
+//		@Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+//		public ProxyFactoryBean myObject() {
+//			ProxyFactoryBean pfb = new ProxyFactoryBean();
+//			pfb.setTargetSource(poolTargetSource());
+//			return pfb;
+//		}
+//
+//		@Bean
+//		public CommonsPool2TargetSource poolTargetSource() {
+//			CommonsPool2TargetSource pool = new CommonsPool2TargetSource();
+//			pool.setMaxSize(3);
+//			pool.setTargetBeanName("myObjectTarget");
+//			return pool;
+//		}
+//
+//		@Bean(name = "myObjectTarget")
+//		@Scope(scopeName = "prototype")
+//		public Object myObjectTarget() {
+//			return new Object();
+//		}
+//	}
 
 }

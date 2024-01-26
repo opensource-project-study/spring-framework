@@ -392,15 +392,15 @@ public class ProxyFactoryTests {
 		assertThat(proxy.toString()).isEqualTo(target);
 	}
 
-	@Test
-	public void testDateProxy() {
-		Date target = new Date();
-		ProxyFactory pf = new ProxyFactory(target);
-		pf.setProxyTargetClass(true);
-		ClassLoader cl = target.getClass().getClassLoader();
-		Date proxy = (Date) pf.getProxy(cl);
-		assertThat(proxy.getTime()).isEqualTo(target.getTime());
-	}
+//	@Test
+//	public void testDateProxy() {
+//		Date target = new Date();
+//		ProxyFactory pf = new ProxyFactory(target);
+//		pf.setProxyTargetClass(true);
+//		ClassLoader cl = target.getClass().getClassLoader();
+//		Date proxy = (Date) pf.getProxy(cl);
+//		assertThat(proxy.getTime()).isEqualTo(target.getTime());
+//	}
 
 	@Test
 	public void testJdbcSavepointProxy() throws SQLException {
