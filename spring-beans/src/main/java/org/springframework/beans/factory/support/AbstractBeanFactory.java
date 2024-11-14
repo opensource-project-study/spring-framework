@@ -236,7 +236,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	/**
 	 * Return an instance, which may be shared or independent, of the specified bean.
-	 * <p>假设有两个bean，beanA和beanB，beanA依赖beanB（即beanB要注入beanA），beanB也依赖beanA（即beanA要注入beanB），其调用链路如下：
+	 * <p>假设有两个bean，beanA和beanB，beanA依赖beanB（即beanB要注入到beanA中），beanB也依赖beanA（即beanA要注入到beanB中），其调用链路如下：
 	 * <pre>
 	 *     beanA	调用{@link #getSingleton(String, ObjectFactory)} -> {@link AbstractAutowireCapableBeanFactory#createBean(String, RootBeanDefinition, Object[])} -> {@link AbstractAutowireCapableBeanFactory#doCreateBean(String, RootBeanDefinition, Object[])} -> {@link DefaultSingletonBeanRegistry#addSingletonFactory(String, ObjectFactory)}
 	 *     		beanB		为了将beanB注入到beanA中，查找beanB {@link #getSingleton(String, ObjectFactory)} -> ... -> {@link DefaultSingletonBeanRegistry#addSingletonFactory(String, ObjectFactory)}
@@ -244,7 +244,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 *     			 beanA注入完成，回溯
 	 *     	    beanB创建完成，调用{@link DefaultSingletonBeanRegistry#addSingleton(String, Object)}将beanB加入{@code singletonObjects}中
 	 *     	    beanB注入完成，回溯
-	 *     beanA创建完成，调用{@link DefaultSingletonBeanRegistry#addSingleton(String, Object)}将beanB加入{@code singletonObjects}中
+	 *     beanA创建完成，调用{@link DefaultSingletonBeanRegistry#addSingleton(String, Object)}将beanA加入{@code singletonObjects}中
 	 *
 	 *     beanB	调用{@link #getSingleton(String)}查找到之后直接返回
 	 * </pre>
